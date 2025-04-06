@@ -1,9 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from services.ocr_service import process_file
-from services.nlp_service import extract_accident_details, summarize_report
-from services.letter_service import generate_letters
+from services.letter_service import generate_letters,summarize_report
 import os
 import pandas as pd
 
@@ -27,18 +25,7 @@ def process_report(file: UploadFile = File(...)):
         with open(temp_file, "wb") as buffer:
             buffer.write(file.file.read())
 
-        if temp_file.lower().endswith((".png", ".jpg", ".jpeg")):
-            # Extract Text from Image/PDF
-            extracted_text = process_file(temp_file)
-            extracted_text = extracted_text.get("text", "")
-
-            if not extracted_text:
-                raise HTTPException(status_code=400, detail="No text extracted from the image.")    
-
-            # Run AI-based NLP for Details Extraction
-            details = extract_accident_details(extracted_text)
-
-        elif temp_file.lower().endswith(".csv"): 
+        if temp_file.lower().endswith(".csv"): 
             df = pd.read_csv(temp_file)
             details = df.to_dict(orient="records")
             extracted_text = " ".join(df.astype(str).values.flatten()) 

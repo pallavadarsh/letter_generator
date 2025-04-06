@@ -48,14 +48,43 @@ const ReportDetails = ({ result }) => {
             )}
 
             {/* Summary Section */}
-            {tabIndex === 1 && (
-                <Paper elevation={3} style={{ padding: "20px", marginTop: "20px", textAlign: "left" }}>
-                    <Typography variant="h6">Summary</Typography>
-                    <ul style={{ paddingLeft: "20px" }}>
-                        {bulletPoints}
-                    </ul>
-                </Paper>
-            )}
+{tabIndex === 1 && (
+    <Paper elevation={3} style={{ padding: "20px", marginTop: "20px", textAlign: "left" }}>
+        <Typography variant="h6">Summary</Typography>
+        <div style={{ marginTop: "10px" }}>
+            {summary.split('\n').map((line, index) => {
+                if (line.startsWith('**')) {
+                    return (
+                        <Typography key={index} variant="subtitle1" style={{ fontWeight: 'bold', marginTop: '16px' }}>
+                            {line.replace(/\*\*/g, '')}
+                        </Typography>
+                    );
+                } else if (line.startsWith('* ')) {
+                    return (
+                        <ul key={index} style={{ margin: 0, paddingLeft: "20px" }}>
+                            <li>{line.slice(2)}</li>
+                        </ul>
+                    );
+                } else if (line.startsWith('+ ')) {
+                    return (
+                        <ul key={index} style={{ margin: 0, paddingLeft: "40px" }}>
+                            <li>{line.slice(2)}</li>
+                        </ul>
+                    );
+                } else if (line.trim() === '') {
+                    return <br key={index} />;
+                } else {
+                    return (
+                        <Typography key={index} variant="body2">
+                            {line}
+                        </Typography>
+                    );
+                }
+            })}
+        </div>
+    </Paper>
+)}
+
         </Container>
     );
 };

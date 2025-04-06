@@ -1,10 +1,6 @@
 fastapi
 uvicorn
-pytesseract
-Pillow
-spacy
-transformers
-torch
 pytest
 python-multipart
 pandas
+groq

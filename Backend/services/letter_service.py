@@ -1,25 +1,67 @@
+from groq import Groq
+import os
+
+# Set your GROQ API key
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+client = Groq(api_key=GROQ_API_KEY)
+
 def generate_letter(details: dict) -> str:
-    """Generate a personalized legal letter based on extracted accident details."""
-    return f"""
-    Dear {details.get('Name', 'Client')},
+    """Generate a personalized legal letter using GROQ LLM based on accident details."""
+    
+    prompt = f"""
+    Write a professional and empathetic legal letter for the following accident case:
 
-    We hope you are doing well. We understand that you were involved in an accident on {details.get('Date', 'N/A')} at {details.get('Location', 'Unknown')}.
-    Based on the details provided, the incident appears to have been caused by {details.get('Cause', 'Unknown')}.
+    Name: {details.get('Name', 'Client')}
+    Date: {details.get('Date', 'N/A')}
+    Location: {details.get('Location', 'Unknown')}
+    Cause: {details.get('Cause', 'Unknown')}
+    Responsible Party: {details.get('Responsible Party', 'Unknown')}
+    Vehicle: {details.get('Vehicle', 'Unknown')}
+    Insurance: {details.get('Insurance', 'Unknown')}
+    Address: {details.get('Address', '')}
+    Description: {details.get('Description', '')}
 
-    The responsible party for the accident is identified as {details.get('Responsible Party', 'Unknown')}.
-    Your vehicle ({details.get('Vehicle', 'Unknown')}) was affected in the incident, and your insurance provider ({details.get('Insurance', 'Unknown')}) may cover the damages.
-
-    {details.get('Description', '')}
-
-    Given these circumstances, you may have legal rights and could be eligible for compensation.
-    Our legal team is here to guide you through the process and ensure that you receive the necessary support, including medical assistance and legal consultation.
-
-    Please reach out to us at your earliest convenience to discuss the next steps.
-
-    Best regards,  
-    [Your Law Firm Name]
+    The letter should address the client by name, acknowledge the accident and circumstances, mention the responsible party and insurance, describe the incident concisely, and offer legal and medical assistance. Close professionally with your law firm.
     """
+
+    response = client.chat.completions.create(
+        model="llama3-70b-8192",
+        messages=[
+            {"role": "system", "content": "You are a helpful legal assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.7
+    )
+
+    return response.choices[0].message.content.strip()
+
 
 def generate_letters(reports: list) -> list:
     """Generate legal letters for multiple accident cases and return as a list."""
     return [generate_letter(details) for details in reports]
+
+
+def summarize_report(text: str) -> str:
+    """Generate a more detailed and descriptive summary using Groq's LLaMA 3 model."""
+    prompt = f"""
+    Please provide a clear and concise summary of the following police report text. 
+    The summary should capture key facts like names, dates, accident locations, causes, 
+    responsible parties, vehicles, insurance info, and any important medical or legal details. 
+    Present it in a well-structured and informative way.
+
+    Report Text:
+    \"\"\"
+    {text}
+    \"\"\"
+    """
+
+    response = client.chat.completions.create(
+        model="llama3-70b-8192",
+        messages=[
+            {"role": "system", "content": "You are a helpful legal assistant skilled at summarizing accident reports."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.7
+    )
+
+    return response.choices[0].message.content.strip()
