@@ -1,6 +1,10 @@
 fastapi
 uvicorn
-pytest
 python-multipart
-pandas
+pydantic
 groq
+pandas
+jinja2
+langgraph==0.0.40
+langchain==0.1.16
+requests
