@@ -18,6 +18,8 @@ class TraceUploadPayload(BaseModel):
 
 TRACE_STORE = {}
 
+
+# Endpoint to upload the traces for agentic workflow
 @router.post("/trace/upload")
 async def upload_trace(payload: TraceUploadPayload):
     TRACE_STORE[payload.trace_id] = payload.events
@@ -26,6 +28,7 @@ async def upload_trace(payload: TraceUploadPayload):
         print(f"Step {event.step}: {event.action}")
     return JSONResponse(content={"message": "Trace uploaded successfully"})
 
+# Endpoint to get the traces back on the UI
 @router.get("/trace/{trace_id}")
 async def get_trace(trace_id: str):
     events = TRACE_STORE.get(trace_id)
