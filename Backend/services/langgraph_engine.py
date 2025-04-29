@@ -2,13 +2,13 @@
 from langgraph.graph import StateGraph
 from langgraph.tracers import LangGraphTrace
 
-# Dummy logic placeholder
-# Replace with your actual graph logic
+# GRAPH is bieing build here
 def build_graph():
     graph = StateGraph()
     # Define your graph here: nodes, edges, entry, etc.
     return graph
 
+#this runs the the entire agentic flow in langgraph
 def run_agentic_workflow(input_data):
     tracer = LangGraphTracer(project_name="AI Patient Intake")
     graph = build_graph()
